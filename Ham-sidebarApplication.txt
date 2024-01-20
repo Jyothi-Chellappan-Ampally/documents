@@ -1,0 +1,390 @@
+A sidebar is an important element of a website’s design since it allows users to quickly visit any section within a site.
+
+Prerequisite:
+NPM & Node JS
+React JS
+react-router-dom
+React useState hook
+Approach to Create Responsive Sidebar with Dropdown :
+Create a navigation bar with a hamburger menu with items routed to different pages using react-router-dom.
+Use icons from the react-icons for the menu and dropdown.
+Use styled components to create components with custom css and styles.
+Steps to Create React Application:
+Step 1: Initialize the react app using this command in the terminal.
+
+npx create-react-app react-sidebar-dropdown
+Step 2: Move to the project directory.
+
+cd react-sidebar-dropdown
+Step 3: Install the dependencies required in this project by typing the given command in the terminal.
+
+npm i react-router-dom --save styled-components --save react-icons
+Project Structure:
+
+
+
+The updated dependencies in package.json file.
+
+"dependencies": {
+        "@testing-library/jest-dom": "^5.17.0",
+        "@testing-library/react": "^13.4.0",
+        "@testing-library/user-event": "^13.5.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-icons": "^4.12.0",
+        "react-router-dom": "^6.20.0",
+        "react-scripts": "5.0.1",
+        "styled-components": "^6.1.1",
+        "web-vitals": "^2.1.4"
+}
+Example: This example demostrates how to create a responsive sidebar menu using the react-router-dom and styled-components package.
+
+////App.js
+// Filename - App.js
+
+import "./App.css";
+import Sidebar from "./components/Sidebar";
+import {
+	BrowserRouter as Router,
+	Routes,
+	Route,
+} from "react-router-dom";
+import {
+	AboutUs,
+	OurAim,
+	OurVision,
+} from "./pages/AboutUs";
+import {
+	Services,
+	ServicesOne,
+	ServicesTwo,
+	ServicesThree,
+} from "./pages/Services";
+import {
+	Events,
+	EventsOne,
+	EventsTwo,
+} from "./pages/Events";
+import Contact from "./pages/ContactUs";
+import Support from "./pages/Support";
+function App() {
+	return (
+		<Router>
+			<Sidebar />
+			<Routes>
+				<Route
+					path="/about-us"
+					element={<AboutUs />}
+				/>
+				<Route
+					path="/about-us/aim"
+					element={<OurAim />}
+				/>
+				<Route
+					path="/about-us/vision"
+					element={<OurVision />}
+				/>
+				<Route
+					path="/services"
+					element={<Services />}
+				/>
+				<Route
+					path="/services/services1"
+					element={<ServicesOne />}
+				/>
+				<Route
+					path="/services/services2"
+					element={<ServicesTwo />}
+				/>
+				<Route
+					path="/services/services3"
+					element={<ServicesThree />}
+				/>
+				<Route
+					path="/contact"
+					element={<Contact />}
+				/>
+				<Route
+					path="/events"
+					element={<Events />}
+				/>
+				<Route
+					path="/events/events1"
+					element={<EventsOne />}
+				/>
+				<Route
+					path="/events/events2"
+					element={<EventsTwo />}
+				/>
+				<Route
+					path="/support"
+					element={<Support />}
+				/>
+			</Routes>
+		</Router>
+	);
+}
+
+export default App;
+
+Steps to Run the Project: Save all files and start the server by using the below command in your PowerShell terminal or IDE’s terminal.
+
+npm start
+Output: This output will be visible on the http://localhost:3000/ on the browser window.
+
+
+///How to create a simple Responsive Footer in React JS ?
+A responsive Footer in the React JS application is part of webpages that adjusts layout dynamically and signals to the user that they have reached the end of the webpage and provides useful links to other areas of the website that the user may want to visit.
+
+Node Package Manager & npm
+ReactJS Environment Setup
+styled-components
+Steps to create the application
+
+Step 1: You will start a new project using create-react-app so open your terminal and type:
+
+npx create-react-app react-footer
+Step 2: Now go to your react-footer folder by typing the given command in the terminal:
+
+cd react-footer
+Step 3: Install the dependencies required in this project by typing the given command in the terminal.
+
+npm install --save styled-components
+Step 4: Now create the components folder in src then go to the components folder and create two files by the name Footer.js and FooterStyles.js
+
+Project Structure
+The file structure in the project will look like this.
+
+
+
+Dependencies list after installing packages
+
+"dependencies": {
+        "@testing-library/jest-dom": "^5.17.0",
+        "@testing-library/react": "^13.4.0",
+        "@testing-library/user-event": "^13.5.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-scripts": "5.0.1",
+        "styled-components": "^6.0.9",
+        "web-vitals": "^2.1.4"
+}
+Example: In this example we will design a footer, for that we will need to manipulate the App.js file and other created components file. We will use Footer components from the style-components library for simple and efficient implementation of footer.
+
+Javascript
+// Filename - App.js
+ 
+import React from "react";
+import "./App.css";
+import Footer from "./components/Footer.js";
+function App() {
+    return (
+        <div>
+            <div
+                style={{
+                    minHeight: "400px",
+                    color: "green",
+                }}
+            >
+                <h1>GeeksforGeeks</h1>
+            </div>
+            <Footer />
+        </div>
+    );
+}
+ 
+export default App;
+Javascript
+// components/FooterStyles.js
+ 
+import styled from "styled-components";
+ 
+export const Box = styled.div`
+    padding: 5% 2.5%;
+    background: black;
+    // position: absolute;
+    bottom: 0;
+    width: 95%;
+ 
+    @media (max-width: 1000px) {
+        // padding: 70px 30px;
+    }
+`;
+ 
+export const FooterContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 1000px;
+    margin: 0 auto;
+    /* background: red; */
+`;
+ 
+export const Column = styled.div`
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-left: 60px;
+`;
+ 
+export const Row = styled.div`
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(185px, 1fr)
+    );
+    grid-gap: 20px;
+ 
+    @media (max-width: 1000px) {
+        grid-template-columns: repeat(
+            auto-fill,
+            minmax(200px, 1fr)
+        );
+    }
+`;
+ 
+export const FooterLink = styled.a`
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 18px;
+    text-decoration: none;
+ 
+    &:hover {
+        color: green;
+        transition: 200ms ease-in;
+    }
+`;
+ 
+export const Heading = styled.p`
+    font-size: 24px;
+    color: #fff;
+    margin-bottom: 40px;
+    font-weight: bold;
+`;
+Javascript
+// Filename - components/Footer.js
+ 
+import React from "react";
+import {
+    Box,
+    FooterContainer,
+    Row,
+    Column,
+    FooterLink,
+    Heading,
+} from "./FooterStyles";
+ 
+const Footer = () => {
+    return (
+        <Box>
+            <h1
+                style={{
+                    color: "green",
+                    textAlign: "center",
+                    marginTop: "10px",
+                }}
+            >
+                A Computer Science Portal for Geeks!
+            </h1>
+            <FooterContainer>
+                <Row>
+                    <Column>
+                        <Heading>About Us</Heading>
+                        <FooterLink href="#">
+                            Aim
+                        </FooterLink>
+                        <FooterLink href="#">
+                            Vision
+                        </FooterLink>
+                        <FooterLink href="#">
+                            Testimonials
+                        </FooterLink>
+                    </Column>
+                    <Column>
+                        <Heading>Services</Heading>
+                        <FooterLink href="#">
+                            Writing
+                        </FooterLink>
+                        <FooterLink href="#">
+                            Internships
+                        </FooterLink>
+                        <FooterLink href="#">
+                            Coding
+                        </FooterLink>
+                        <FooterLink href="#">
+                            Teaching
+                        </FooterLink>
+                    </Column>
+                    <Column>
+                        <Heading>Contact Us</Heading>
+                        <FooterLink href="#">
+                            Uttar Pradesh
+                        </FooterLink>
+                        <FooterLink href="#">
+                            Ahemdabad
+                        </FooterLink>
+                        <FooterLink href="#">
+                            Indore
+                        </FooterLink>
+                        <FooterLink href="#">
+                            Mumbai
+                        </FooterLink>
+                    </Column>
+                    <Column>
+                        <Heading>Social Media</Heading>
+                        <FooterLink href="#">
+                            <i className="fab fa-facebook-f">
+                                <span
+                                    style={{
+                                        marginLeft: "10px",
+                                    }}
+                                >
+                                    Facebook
+                                </span>
+                            </i>
+                        </FooterLink>
+                        <FooterLink href="#">
+                            <i className="fab fa-instagram">
+                                <span
+                                    style={{
+                                        marginLeft: "10px",
+                                    }}
+                                >
+                                    Instagram
+                                </span>
+                            </i>
+                        </FooterLink>
+                        <FooterLink href="#">
+                            <i className="fab fa-twitter">
+                                <span
+                                    style={{
+                                        marginLeft: "10px",
+                                    }}
+                                >
+                                    Twitter
+                                </span>
+                            </i>
+                        </FooterLink>
+                        <FooterLink href="#">
+                            <i className="fab fa-youtube">
+                                <span
+                                    style={{
+                                        marginLeft: "10px",
+                                    }}
+                                >
+                                    Youtube
+                                </span>
+                            </i>
+                        </FooterLink>
+                    </Column>
+                </Row>
+            </FooterContainer>
+        </Box>
+    );
+};
+export default Footer;
+Step to Run Application: Run the application using the following command from the root directory of the project.
+
+npm start
+Output: Now open your browser and go to http://localhost:3000/, you will see the following output:
+

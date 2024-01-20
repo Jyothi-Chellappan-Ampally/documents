@@ -1,0 +1,610 @@
+//////////////////An application to ass websites to the list/////////////////
+package com.cld.website;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Application {
+
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
+
+}
+
+
+///////////////////Controller
+package com.cld.website.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cld.website.model.Website;
+import com.cld.website.service.WebsiteService;
+
+@RestController
+@CrossOrigin(value = "*")
+public class WebsiteRestController {
+
+	@Autowired
+	private WebsiteService websiteService;
+
+	@GetMapping("/websites")
+	public ResponseEntity<List<Website>> getWebsites() throws Exception {
+		return new ResponseEntity<List<Website>>(websiteService.getWebsites(), HttpStatus.OK);
+	}
+
+	@GetMapping("/website/search/{id}")
+	public ResponseEntity<Website> getWebsite(@PathVariable Integer id) throws Exception {
+		return new ResponseEntity<Website>(websiteService.getWebsite(id), HttpStatus.OK);
+	}
+
+	@PostMapping("/website/add")
+	public ResponseEntity<Void> saveWebsite(@RequestBody Website website) throws Exception {
+		websiteService.saveWebsite(website);
+		return new ResponseEntity<Void>(HttpStatus.CREATED);
+	}
+
+	@PostMapping("/website/update")
+	public ResponseEntity<Void> updateWebsite(@RequestBody Website website) throws Exception {
+		websiteService.updateWebsite(website);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
+	@GetMapping("/website/delete/{id}")
+	public ResponseEntity<Website> deleteWebsite(@PathVariable Integer id) throws Exception {
+		websiteService.deleteWebsite(id);
+		return new ResponseEntity<Website>(HttpStatus.OK);
+	}
+
+}
+
+/////////Model
+package com.cld.website.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cld.website.model.Website;
+import com.cld.website.service.WebsiteService;
+
+@RestController
+@CrossOrigin(value = "*")
+public class WebsiteRestController {
+
+	@Autowired
+	private WebsiteService websiteService;
+
+	@GetMapping("/websites")
+	public ResponseEntity<List<Website>> getWebsites() throws Exception {
+		return new ResponseEntity<List<Website>>(websiteService.getWebsites(), HttpStatus.OK);
+	}
+
+	@GetMapping("/website/search/{id}")
+	public ResponseEntity<Website> getWebsite(@PathVariable Integer id) throws Exception {
+		return new ResponseEntity<Website>(websiteService.getWebsite(id), HttpStatus.OK);
+	}
+
+	@PostMapping("/website/add")
+	public ResponseEntity<Void> saveWebsite(@RequestBody Website website) throws Exception {
+		websiteService.saveWebsite(website);
+		return new ResponseEntity<Void>(HttpStatus.CREATED);
+	}
+
+	@PostMapping("/website/update")
+	public ResponseEntity<Void> updateWebsite(@RequestBody Website website) throws Exception {
+		websiteService.updateWebsite(website);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
+	@GetMapping("/website/delete/{id}")
+	public ResponseEntity<Website> deleteWebsite(@PathVariable Integer id) throws Exception {
+		websiteService.deleteWebsite(id);
+		return new ResponseEntity<Website>(HttpStatus.OK);
+	}
+
+}
+
+/////////Repo
+package com.cld.website.repo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.springframework.stereotype.Component;
+import com.cld.website.model.*;
+
+@Component
+public class WebsiteRepository {
+    private static final Map<Integer, Website> WEBSITES = new HashMap<>();
+    private static Integer counter = 0;
+    public List<Website> findAll() {
+        return new ArrayList<>(WEBSITES.values());
+    }
+    public Website findById(Integer id) {
+        return WEBSITES.get(id);
+    }
+    public void add(Website website) {
+        counter++;
+        website.setId(counter);
+        WEBSITES.put(counter, website);
+    }
+    public void update(Website website) {
+        WEBSITES.put(website.getId(), website);
+    }
+    public void delete(Integer id) {
+        WEBSITES.remove(id);
+    }
+}
+
+////////service
+package com.cld.website.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.cld.website.model.Website;
+import com.cld.website.repo.WebsiteRepository;
+
+@Service
+public class WebsiteService {
+    @Autowired
+    private WebsiteRepository websiteRepository;
+    public List<Website> getWebsites() {
+        System.out.println("Total Websites: " + websiteRepository.findAll().size());
+        return websiteRepository.findAll();
+    }
+    public Website getWebsite(final Integer id) {
+        if (id == null || id == 0) {
+            throw new RuntimeException("You must provide valid website id");
+        }
+        Website website = websiteRepository.findById(id);
+        if (website == null) {
+            throw new RuntimeException("Website detail not found for the given id => " + id);
+        } else {
+            return website;
+        }
+    }
+    public void deleteWebsite(final Integer id) {
+        if (id == null || id == 0) {
+            throw new RuntimeException("You must provide valid website id");
+        }
+        try {
+            websiteRepository.delete(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Website detail not found for the given id => " + id);
+        }
+    }
+    public void saveWebsite(final Website website) {
+        if (website == null || (website.getTitle() == null && website.getUrl() == null)) {
+            throw new RuntimeException("You must provide Website details");
+        }
+        try {
+            websiteRepository.add(website);
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred during website details saving");
+        }
+    }
+    public void updateWebsite(final Website website) {
+        if (website == null || ((website.getId() == null || website.getId() == 0) && website.getTitle() == null && website.getUrl() == null)) {
+            throw new RuntimeException("You must provide Website details");
+        }
+        try {
+            websiteRepository.update(website);
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred during website details updating");
+        }
+    }
+}
+
+//////////////////application.properties
+server.port = 2024
+spring.datasource.url=jdbc:mysql://localhost:3306/weatherdb
+spring.datasource.username=root
+spring.datasource.password=jyothi
+spring.datasource.driverClassName=com.mysql.jdbc.Driver
+spring.jpa.database-platform=org.hibernate.dialect
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+spring.jpa.properties.hibernate.dialect.storage_engine=innodb
+spring.data.jpa.repositories.enabled=true
+
+
+
+////////////////////////React FrontEnd
+
+////components
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+class Create extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {title: '', url:''};
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  
+  handleChange(event) {
+	  const state = this.state
+	  state[event.target.name] = event.target.value
+	  this.setState(state);
+  }
+  
+  handleSubmit(event) {
+	  event.preventDefault();
+	  fetch('http://localhost:2024/website/add', {
+			method: 'POST',
+			body: JSON.stringify({
+				title: this.state.title,
+				url: this.state.url
+			}),
+			headers: {
+				"Content-type": "application/json; charset=UTF-8"
+			}
+		}).then(response => {
+				if(response.status === 201) {
+					alert("New website saved successfully");
+					window.location.href = '/';
+				}
+			});
+  }
+  
+  render() {
+    return (
+		<div id="container">
+		  <Link to="/">Websites</Link>
+			  <p/>
+			  <form onSubmit={this.handleSubmit}>
+				<p>
+					<label>Title:</label>
+					<input type="text" name="title" value={this.state.title} onChange={this.handleChange} placeholder="Title" />
+				</p>
+				<p>
+					<label>URL:</label>
+					<input type="text" name="url" value={this.state.url} onChange={this.handleChange} placeholder="URL" />
+				</p>
+				<p>
+					<input type="submit" value="Submit" />
+				</p>
+			  </form>
+		   </div>
+    );
+  }
+}
+
+export default Create;
+
+//////////////update
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+class Update extends React.Component {
+	
+  constructor(props) {
+    super(props);
+    this.state = {id: '', title: '', url: ''};
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  
+  componentDidMount() {
+	fetch('http://localhost:2024/website/search/' + this.props.match.params.id)
+		.then(response => {
+			return response.json();
+		}).then(result => {
+			console.log(result);
+			this.setState({
+				id:result.id,
+				title:result.title,
+				url:result.url
+			});
+		});
+  }
+  
+  handleChange(event) {
+	  const state = this.state
+	  state[event.target.name] = event.target.value
+	  this.setState(state);
+  }
+  
+  handleSubmit(event) {
+	  event.preventDefault();
+	  fetch('http://localhost:2024/website/update', {
+			method: 'POST',
+			body: JSON.stringify({
+				id:this.state.id,
+				title: this.state.title,
+				url: this.state.url
+			}),
+			headers: {
+				"Content-type": "application/json; charset=UTF-8"
+			}
+		}).then(response => {
+				if(response.status === 200) {
+					alert("Website update successfully.");
+					window.location.href = '/';
+				}
+			});
+  }
+  
+  render() {
+    return (
+		<div id="container">
+		  <Link to="/">Websites</Link>
+			  <p/>
+			  <form onSubmit={this.handleSubmit}>
+				<input type="hidden" name="id" value={this.state.id}/>
+					<p>
+					<label>Title:</label>
+						<input type="text" name="title" value={this.state.title} onChange={this.handleChange} placeholder="Title" />
+					</p>
+					<p>
+						<label>URL:</label>
+						<input type="text" name="url" value={this.state.url} onChange={this.handleChange} placeholder="URL" />
+					</p>
+					<p>
+						<input type="submit" value="Submit" />
+					</p>
+			  </form>
+		   </div>
+    );
+  }
+}
+
+export default Update;
+
+/////////////Websites
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+class Websites extends React.Component {
+	
+	constructor(props) {
+		super(props);
+		this.state = {websites: []};
+		this.headers = [
+			{ key: 'id', label: 'Id'},
+			{ key: 'title', label: 'Title' },
+			{ key: 'url', label: 'URL' }
+		];
+		this.deleteWebsite = this.deleteWebsite.bind(this);
+	}
+	
+	componentDidMount() {
+		fetch('http://localhost:2024/websites')
+			.then(response => {
+				return response.json();
+			}).then(result => {
+				console.log(result);
+				this.setState({
+					websites:result
+				});
+			});
+	}
+	
+	deleteWebsite(id) {
+		if(window.confirm("Are you sure want to delete?")) {
+			fetch('http://localhost:2024/website/delete/' + id)
+				.then(response => {
+					if(response.status === 200) {
+						alert("Website deleted successfully");
+						window.location.href = '/';
+					}
+			 });
+		}
+	}
+	
+	render() {
+		if(this.state.websites && Object.keys(this.state.websites).length > 0) {
+			return (
+				<div id="container">
+					<Link to="/create">Add Website</Link>
+					<p/>					
+					<table>
+						<thead>
+							<tr>
+							{
+								this.headers.map(function(h) {
+									return (
+										<th key = {h.key}>{h.label}</th>
+									)
+								})
+							}
+							  <th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							{
+								this.state.websites.map(function(item, key) {
+								return (
+									<tr key = {key}>
+									  <td>{item.id}</td>
+									  <td>{item.title}</td>
+									  <td>{item.url}</td>
+									  <td>
+											<Link to={`/update/${item.id}`}>Edit</Link>
+											&nbsp;<button onClick={this.deleteWebsite.bind(this, item.id)}>Delete</button>
+									  </td>
+									</tr>
+												)
+								}.bind(this))
+							}
+						</tbody>
+					</table>
+				</div>
+			)
+		} else {
+			return (
+				<div id="container">
+					<Link to="/create">Add Website</Link><p/>
+					<div style={{color:'red'}}>No record found</div>
+				</div>
+			)
+		}
+	}
+}
+
+export default Websites;
+
+////////////////////app.js
+import logo from './logo.svg';
+import './App.css';
+import React from "react"; 
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+       
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+
+//////////////app.css
+#container {
+	width: 800px;
+	margin: auto;
+}
+table {
+	border-collapse: collapse;
+	width: 800px;
+	margin: 10px auto;
+}
+th, td {
+	border: 1px solid #ddd;
+	text-align: left;
+	padding: 8px;
+}
+tr:nth-child(even) {
+	background-color: #f2f2f2
+}
+tr:hover {
+	background-color: #ddd;
+}
+th {
+	padding-top: 12px;
+	padding-bottom: 12px;
+	text-align: left;
+	background-color: #4CAF50;
+	color: white;
+}
+/* body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+} */
+
+
+/////////////////index.js
+import React from 'react';
+//import ReactDOM from 'react-dom-client';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import './App.css';
+import Websites from './components/Websites';
+import Create from './components/Create';
+import Update from './components/Update';
+import reportWebVitals from './reportWebVitals';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+   <Router>
+			<Route exact path='/' component={Websites} />
+			<Route path='/create' component={Create} />
+			<Route path='/update/:id' component={Update} />
+		</Router>
+    <App />
+   </React.StrictMode>
+);
+
+
+////////////pkg.json
+{
+  "name": "websitefe",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^5.3.4",
+    "react-scripts": "^3.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts --openssl-legacy-provider start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
+
+//////////app.js
+import logo from './logo.svg';
+import './App.css';
+import React from "react"; 
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+       
+      </header>
+    </div>
+  );
+}
+
+export default App;
+

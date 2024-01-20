@@ -1,0 +1,610 @@
+//////////////////An application to ass Students to the list/////////////////
+package com.cld.student;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Application {
+
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
+
+}
+
+
+///////////////////Controller
+package com.cld.student.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cld.student.model.student;
+import com.cld.student.service.Studentservice;
+
+@RestController
+@CrossOrigin(value = "*")
+public class studentRestController {
+
+	@Autowired
+	private Studentservice Studentservice;
+
+	@GetMapping("/Students")
+	public ResponseEntity<List<student>> getStudents() throws Exception {
+		return new ResponseEntity<List<student>>(Studentservice.getStudents(), HttpStatus.OK);
+	}
+
+	@GetMapping("/student/search/{id}")
+	public ResponseEntity<student> getstudent(@PathVariable Integer id) throws Exception {
+		return new ResponseEntity<student>(Studentservice.getstudent(id), HttpStatus.OK);
+	}
+
+	@PostMapping("/student/add")
+	public ResponseEntity<Void> savestudent(@RequestBody student student) throws Exception {
+		Studentservice.savestudent(student);
+		return new ResponseEntity<Void>(HttpStatus.CREATED);
+	}
+
+	@PostMapping("/student/update")
+	public ResponseEntity<Void> updatestudent(@RequestBody student student) throws Exception {
+		Studentservice.updatestudent(student);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
+	@GetMapping("/student/delete/{id}")
+	public ResponseEntity<student> deletestudent(@PathVariable Integer id) throws Exception {
+		Studentservice.deletestudent(id);
+		return new ResponseEntity<student>(HttpStatus.OK);
+	}
+
+}
+
+/////////Model
+package com.cld.student.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cld.student.model.student;
+import com.cld.student.service.Studentservice;
+
+@RestController
+@CrossOrigin(value = "*")
+public class studentRestController {
+
+	@Autowired
+	private Studentservice Studentservice;
+
+	@GetMapping("/Students")
+	public ResponseEntity<List<student>> getStudents() throws Exception {
+		return new ResponseEntity<List<student>>(Studentservice.getStudents(), HttpStatus.OK);
+	}
+
+	@GetMapping("/student/search/{id}")
+	public ResponseEntity<student> getstudent(@PathVariable Integer id) throws Exception {
+		return new ResponseEntity<student>(Studentservice.getstudent(id), HttpStatus.OK);
+	}
+
+	@PostMapping("/student/add")
+	public ResponseEntity<Void> savestudent(@RequestBody student student) throws Exception {
+		Studentservice.savestudent(student);
+		return new ResponseEntity<Void>(HttpStatus.CREATED);
+	}
+
+	@PostMapping("/student/update")
+	public ResponseEntity<Void> updatestudent(@RequestBody student student) throws Exception {
+		Studentservice.updatestudent(student);
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+
+	@GetMapping("/student/delete/{id}")
+	public ResponseEntity<student> deletestudent(@PathVariable Integer id) throws Exception {
+		Studentservice.deletestudent(id);
+		return new ResponseEntity<student>(HttpStatus.OK);
+	}
+
+}
+
+/////////Repo
+package com.cld.student.repo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.springframework.stereotype.Component;
+import com.cld.student.model.*;
+
+@Component
+public class studentRepository {
+    private static final Map<Integer, student> Students = new HashMap<>();
+    private static Integer counter = 0;
+    public List<student> findAll() {
+        return new ArrayList<>(Students.values());
+    }
+    public student findById(Integer id) {
+        return Students.get(id);
+    }
+    public void add(student student) {
+        counter++;
+        student.setId(counter);
+        Students.put(counter, student);
+    }
+    public void update(student student) {
+        Students.put(student.getId(), student);
+    }
+    public void delete(Integer id) {
+        Students.remove(id);
+    }
+}
+
+////////service
+package com.cld.student.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.cld.student.model.student;
+import com.cld.student.repo.studentRepository;
+
+@Service
+public class Studentservice {
+    @Autowired
+    private studentRepository studentRepository;
+    public List<student> getStudents() {
+        System.out.println("Total Students: " + studentRepository.findAll().size());
+        return studentRepository.findAll();
+    }
+    public student getstudent(final Integer id) {
+        if (id == null || id == 0) {
+            throw new RuntimeException("You must provide valid student id");
+        }
+        student student = studentRepository.findById(id);
+        if (student == null) {
+            throw new RuntimeException("student detail not found for the given id => " + id);
+        } else {
+            return student;
+        }
+    }
+    public void deletestudent(final Integer id) {
+        if (id == null || id == 0) {
+            throw new RuntimeException("You must provide valid student id");
+        }
+        try {
+            studentRepository.delete(id);
+        } catch (Exception e) {
+            throw new RuntimeException("student detail not found for the given id => " + id);
+        }
+    }
+    public void savestudent(final student student) {
+        if (student == null || (student.getTitle() == null && student.getUrl() == null)) {
+            throw new RuntimeException("You must provide student details");
+        }
+        try {
+            studentRepository.add(student);
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred during student details saving");
+        }
+    }
+    public void updatestudent(final student student) {
+        if (student == null || ((student.getId() == null || student.getId() == 0) && student.getTitle() == null && student.getUrl() == null)) {
+            throw new RuntimeException("You must provide student details");
+        }
+        try {
+            studentRepository.update(student);
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred during student details updating");
+        }
+    }
+}
+
+//////////////////application.properties
+server.port = 2024
+spring.datasource.url=jdbc:mysql://localhost:3306/weatherdb
+spring.datasource.username=root
+spring.datasource.password=jyothi
+spring.datasource.driverClassName=com.mysql.jdbc.Driver
+spring.jpa.database-platform=org.hibernate.dialect
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+spring.jpa.properties.hibernate.dialect.storage_engine=innodb
+spring.data.jpa.repositories.enabled=true
+
+
+
+////////////////////////React FrontEnd
+
+////components
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+class Create extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {title: '', url:''};
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  
+  handleChange(event) {
+	  const state = this.state
+	  state[event.target.name] = event.target.value
+	  this.setState(state);
+  }
+  
+  handleSubmit(event) {
+	  event.preventDefault();
+	  fetch('http://localhost:2024/student/add', {
+			method: 'POST',
+			body: JSON.stringify({
+				title: this.state.title,
+				url: this.state.url
+			}),
+			headers: {
+				"Content-type": "application/json; charset=UTF-8"
+			}
+		}).then(response => {
+				if(response.status === 201) {
+					alert("New student saved successfully");
+					window.location.href = '/';
+				}
+			});
+  }
+  
+  render() {
+    return (
+		<div id="container">
+		  <Link to="/">Students</Link>
+			  <p/>
+			  <form onSubmit={this.handleSubmit}>
+				<p>
+					<label>Title:</label>
+					<input type="text" name="title" value={this.state.title} onChange={this.handleChange} placeholder="Title" />
+				</p>
+				<p>
+					<label>URL:</label>
+					<input type="text" name="url" value={this.state.url} onChange={this.handleChange} placeholder="URL" />
+				</p>
+				<p>
+					<input type="submit" value="Submit" />
+				</p>
+			  </form>
+		   </div>
+    );
+  }
+}
+
+export default Create;
+
+//////////////update
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+class Update extends React.Component {
+	
+  constructor(props) {
+    super(props);
+    this.state = {id: '', title: '', url: ''};
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  
+  componentDidMount() {
+	fetch('http://localhost:2024/student/search/' + this.props.match.params.id)
+		.then(response => {
+			return response.json();
+		}).then(result => {
+			console.log(result);
+			this.setState({
+				id:result.id,
+				title:result.title,
+				url:result.url
+			});
+		});
+  }
+  
+  handleChange(event) {
+	  const state = this.state
+	  state[event.target.name] = event.target.value
+	  this.setState(state);
+  }
+  
+  handleSubmit(event) {
+	  event.preventDefault();
+	  fetch('http://localhost:2024/student/update', {
+			method: 'POST',
+			body: JSON.stringify({
+				id:this.state.id,
+				title: this.state.title,
+				url: this.state.url
+			}),
+			headers: {
+				"Content-type": "application/json; charset=UTF-8"
+			}
+		}).then(response => {
+				if(response.status === 200) {
+					alert("student update successfully.");
+					window.location.href = '/';
+				}
+			});
+  }
+  
+  render() {
+    return (
+		<div id="container">
+		  <Link to="/">Students</Link>
+			  <p/>
+			  <form onSubmit={this.handleSubmit}>
+				<input type="hidden" name="id" value={this.state.id}/>
+					<p>
+					<label>Title:</label>
+						<input type="text" name="title" value={this.state.title} onChange={this.handleChange} placeholder="Title" />
+					</p>
+					<p>
+						<label>URL:</label>
+						<input type="text" name="url" value={this.state.url} onChange={this.handleChange} placeholder="URL" />
+					</p>
+					<p>
+						<input type="submit" value="Submit" />
+					</p>
+			  </form>
+		   </div>
+    );
+  }
+}
+
+export default Update;
+
+/////////////Students
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+class Students extends React.Component {
+	
+	constructor(props) {
+		super(props);
+		this.state = {Students: []};
+		this.headers = [
+			{ key: 'id', label: 'Id'},
+			{ key: 'title', label: 'Title' },
+			{ key: 'url', label: 'URL' }
+		];
+		this.deletestudent = this.deletestudent.bind(this);
+	}
+	
+	componentDidMount() {
+		fetch('http://localhost:2024/Students')
+			.then(response => {
+				return response.json();
+			}).then(result => {
+				console.log(result);
+				this.setState({
+					Students:result
+				});
+			});
+	}
+	
+	deletestudent(id) {
+		if(window.confirm("Are you sure want to delete?")) {
+			fetch('http://localhost:2024/student/delete/' + id)
+				.then(response => {
+					if(response.status === 200) {
+						alert("student deleted successfully");
+						window.location.href = '/';
+					}
+			 });
+		}
+	}
+	
+	render() {
+		if(this.state.Students && Object.keys(this.state.Students).length > 0) {
+			return (
+				<div id="container">
+					<Link to="/create">Add student</Link>
+					<p/>					
+					<table>
+						<thead>
+							<tr>
+							{
+								this.headers.map(function(h) {
+									return (
+										<th key = {h.key}>{h.label}</th>
+									)
+								})
+							}
+							  <th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							{
+								this.state.Students.map(function(item, key) {
+								return (
+									<tr key = {key}>
+									  <td>{item.id}</td>
+									  <td>{item.title}</td>
+									  <td>{item.url}</td>
+									  <td>
+											<Link to={`/update/${item.id}`}>Edit</Link>
+											&nbsp;<button onClick={this.deletestudent.bind(this, item.id)}>Delete</button>
+									  </td>
+									</tr>
+												)
+								}.bind(this))
+							}
+						</tbody>
+					</table>
+				</div>
+			)
+		} else {
+			return (
+				<div id="container">
+					<Link to="/create">Add student</Link><p/>
+					<div style={{color:'red'}}>No record found</div>
+				</div>
+			)
+		}
+	}
+}
+
+export default Students;
+
+////////////////////app.js
+import logo from './logo.svg';
+import './App.css';
+import React from "react"; 
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+       
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+
+//////////////app.css
+#container {
+	width: 800px;
+	margin: auto;
+}
+table {
+	border-collapse: collapse;
+	width: 800px;
+	margin: 10px auto;
+}
+th, td {
+	border: 1px solid #ddd;
+	text-align: left;
+	padding: 8px;
+}
+tr:nth-child(even) {
+	background-color: #f2f2f2
+}
+tr:hover {
+	background-color: #ddd;
+}
+th {
+	padding-top: 12px;
+	padding-bottom: 12px;
+	text-align: left;
+	background-color: #4CAF50;
+	color: white;
+}
+/* body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+} */
+
+
+/////////////////index.js
+import React from 'react';
+//import ReactDOM from 'react-dom-client';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import './App.css';
+import Students from './components/Students';
+import Create from './components/Create';
+import Update from './components/Update';
+import reportWebVitals from './reportWebVitals';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+   <Router>
+			<Route exact path='/' component={Students} />
+			<Route path='/create' component={Create} />
+			<Route path='/update/:id' component={Update} />
+		</Router>
+    <App />
+   </React.StrictMode>
+);
+
+
+////////////pkg.json
+{
+  "name": "studentfe",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^5.3.4",
+    "react-scripts": "^3.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts --openssl-legacy-provider start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
+
+//////////app.js
+import logo from './logo.svg';
+import './App.css';
+import React from "react"; 
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+       
+      </header>
+    </div>
+  );
+}
+
+export default App;
+

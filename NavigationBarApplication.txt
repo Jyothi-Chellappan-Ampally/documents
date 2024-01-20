@@ -1,0 +1,514 @@
+A navigation bar is an important component in a website that allows a user to easily navigate inside the application. Ideally, the navigation bar should be responsive, meaning that it should fit well according to different screen sizes on both desktop and mobile devices.
+
+Navbar in react is a react component that has routing and responsive behavior in it.
+
+
+Basic Example of React Navbar
+
+First, create a basic react application, for this you can use CRA, Vite, or any other tool.
+
+----npx create-react-app navbar-react
+
+
+The main function of a navigation bar is to allow the user to move across different pages of the application.
+In React we do not use different pages so we will use the React Router library which will enable us to switch pages easily.
+
+----npm i react-router-dom
+
+Now create a component named Navbar.js. In this component, we will have a div that contains links to other pages on our application.
+
+import React from "react";
+import { Link } from "react-router-dom";
+
+const Navbar = () => {
+  return (
+    <div>
+      <li>
+        <Link to="/">Home</Link>
+      </li>
+      <li>
+        <Link to="/projects">Projects</Link>
+      </li>
+      <li>
+        <Link to="/about">About</Link>
+      </li>
+      <li>
+        <Link to="/contact">Contact</Link>
+      </li>
+    </div>
+  );
+};
+
+export default Navbar;
+
+Output output of basic navbar
+
+We have a list of all the different pages we want our to visit, but clicking on these links gives us an error of 404, the reason is we haven't defined what those routes will do.
+
+For this, we have to create individual components on the difdifferentges. For this demo we will create basic components that are enough for the illustration purpose.
+
+----Home.js
+
+import React from 'react';
+const Home = () =>{
+  return (
+    <div>
+      <h3>Home</h3>
+      <div>
+        This is the home page.
+      </div>
+    </div>
+  );
+}
+export default Home;
+
+----Projects.js
+
+import React from 'react';
+const Projects = () =>{
+  return (
+    <div>
+      <h3>Projects</h3>
+      <div>
+        Here are my projects
+      </div>
+    </div>
+  );
+}
+export default Projects;
+
+----About.js
+
+import React from 'react';
+const About = () =>{
+  return (
+    <div>
+      <h3>About</h3>
+      <div>
+        This is the About page
+      </div>
+    </div>
+  );
+}
+export default About;
+
+----Contact.js
+
+import React from 'react';
+const Contact = () =>{
+  return (
+    <div>
+      <h3>Contact</h3>
+      <div>
+        This is the contact page
+      </div>
+    </div>
+  );
+}
+export default Contact;
+
+Now that we have all the Components we need, it is time to link up these components so that when the user clicks on the navbar links then he gets the intended page.
+
+For this purpose, we have to use react-router
+
+In index.js   /////////////elephant
+
+----Index.js
+
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import Home from './Components/Home.js';
+import Projects from './Components/Projects.js';
+import About from './Components/About.js';
+import Contact from './Components/Contact.js';
+import Navbar from './Components/Navbar.js';
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home />
+  },
+  {
+    path: "/projects",
+    element: <Projects />
+  },
+  {
+    path: "/about",
+    element: <About />
+  },
+  {
+    path: "/contact",
+    element: <Contact />
+  },
+]);
+    
+    
+root.render(
+  <StrictMode>
+    <Navbar/>
+    <RouterProvider router={router} />
+  </StrictMode>
+);
+
+
+And here it is, our functional Navbar in React. We have linked up all the different files using react-router in the index.js file. We can always add CSS to make it look awesome.
+
+In the later sections, we will learn how we can make this Navbar responsive using CSS and other UI libraries of React.
+
+Creating a Responsive Navbar
+The navigation bar is important for a website and should be presented properly on mobile as well as desktop devices. A navigation bar usually contains a lot of links which are not possible to fit on a small screen, so we add a hamburger menu and place all our links inside that menu on smaller screens.
+
+We will now learn how to make a responsive navigation bar for all kinds of screens.
+
+1. Using React and CSS
+We will use React and Styled Components to create our navigation bar. Styled components are React components that we can create and use by applying our custom styling to them. It will become clear once we start using them.
+
+Create a React app npx create-react-app react-navbar-resp
+
+Install dependencies npm i styled-components react-router-dom react-icons
+
+Create a NavElement.js file
+
+
+----NavElement.js
+
+import styled from 'styled-components'
+import { FaBars } from 'react-icons/fa'
+import { NavLink as Link } from 'react-router-dom'
+
+export const PrimaryNav = styled.nav`
+  z-index: 14;
+  height: 90px;
+  display: flex;
+  background: #8bc34a;
+  justify-content: space-between;
+  padding: 0.18rem calc((100vw - 1000px) / 2);
+`
+
+export const MenuLink = styled(Link)`
+  color: #fff;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  text-decoration: none;
+  padding: 0 1.2rem;
+  height: 100%;
+  &.active {
+    color: #000000;
+  }
+`
+
+export const Hamburger = styled(FaBars)`
+  display: none;
+  color: #ffffff;
+  @media screen and (max-width: 768px) {
+    display: block;
+    font-size: 1.9rem;
+    top: 0;
+    right: 0;
+    position: absolute;
+    cursor: pointer;
+    transform: translate(-100%, 75%);
+  }
+`
+
+export const Menu = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: -25px;
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`
+
+These are our "Styled Components" and here we have created our custom components with styling applied to them. Now we can use these components just like our normal React components.
+
+----Navbar.js file
+
+import React from 'react'
+import { PrimaryNav, MenuLink, Menu, Hamburger } from './NavElement'
+
+const Navbar = () => {
+  return (
+    <>
+      <PrimaryNav>
+        <Hamburger />
+        <Menu>
+          <MenuLink to="/home" activeStyle>
+            Home
+          </MenuLink>
+          <MenuLink to="/projects" activeStyle>
+            Projects
+          </MenuLink>
+          <MenuLink to="/about" activeStyle>
+            About
+          </MenuLink>
+          <MenuLink to="/contact" activeStyle>
+            Contact
+          </MenuLink>
+        </Menu>
+      </PrimaryNav>
+    </>
+  )
+}
+
+export default Navbar
+
+
+Explanation Here we have created a Navbar component that takes the styled components that we created and displays all the links we want.
+
+Now that we have all the links, we have to create separateateges/components for them.
+
+For this demo we will create very simple pages Home.js
+
+----Home.js
+
+import React from 'react'
+function Home() {
+  return <div>Home</div>
+}
+export default Home
+
+----About.js
+
+import React from 'react'
+function About() {
+  return <div>About</div>
+}
+export default About
+
+----Projects.js
+
+import React from 'react'
+function Projects() {
+  return <div>Projects</div>
+}
+export default Projects
+
+----Contact.js
+
+import React from 'react'
+function Contact() {
+  return <div>Contact</div>
+}
+export default Contact
+
+Now we have all the pages, we will now use react-router to link them together. So inside of the index.js file add this code.
+
+----index.js
+
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Home from './Components/Home.js';
+import Projects from './Components/Projects.js';
+import About from './Components/About.js';
+import Contact from './Components/Contact.js';
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home />
+  },
+  {
+    path: "/projects",
+    element: <Projects />
+  },
+  {
+    path: "/about",
+    element: <About />
+  },
+  {
+    path: "/contact",
+    element: <Contact />
+  },
+]);
+    
+    
+root.render(
+  <StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>
+);
+
+//////////////////material ui
+2. with Material UI
+Material UI is a popular react design library that has a lot of components built in and this greatly increases the development speed giving the developer flexibility of customization.
+
+Material UI has an AppBar component which allows us to create a navigation bar. Let's see how we can use that
+
+First,t create a react project and install Material UI and react-router 
+
+----npm i @material-ui/core @material-ui/icons react-router-dom
+
+----Navbar.js file
+
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
+import Divider from '@mui/material/Divider';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import MenuIcon from '@mui/icons-material/Menu';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
+
+//declaring some constants
+const drawerWidth = 240;
+const navItems = ['home', 'projects',' about', 'contact']; //these are the links that will be displayed in the navbar
+
+const DrawerAppBar = (props: Props) => {
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen((prevState) => !prevState);
+  };
+
+  const drawer = (
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
+      <Typography variant="h6" sx={{ my: 2 }}>
+        NAVBAR
+      </Typography>
+      <Divider />
+      <List>
+        {navItems.map((item) => (
+          <ListItem key={item} disablePadding>
+            <ListItemButton sx={{ textAlign: "center", text-transform : "capitalize" }}>
+                <Link to=`/${item}`>
+                  <ListItemText primary={item} />
+                </Link>
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
+  return (
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <AppBar component="nav">
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: "none" } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+          >
+            Navbar
+          </Typography>
+          <Box sx={{ display: { xs: "none", sm: "block" } }}>
+            {navItems.map((item) => (
+              <Button key={item} sx={{ color: "#fff" }}>
+                <Link to=`/${item}`>
+                    {item}
+                </Link>
+              </Button>
+            ))}
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <Box component="nav">
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true // Better open performance on mobile.
+          }}
+          sx={{
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth
+            }
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </Box>
+      <Box component="main" sx={{ p: 3 }}>
+        <Toolbar />
+        <Typography>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde fugit veniam eius, perspiciatis sunt? Corporis qui ducimus quibusdam, aliquam dolore excepturi quae. Distinctio enim at eligendi perferendis in cum quibusdam sed quae, accusantium et aperiam? Quod itaque exercitationem, at ab sequi qui modi delectus quia corrupti alias distinctio nostrum. Minima ex dolor modi inventore sapiente
+        </Typography>
+      </Box>
+    </Box>
+  );
+};
+export default DrawerAppBar;
+
+Explanation This code might look complex but is simple to understand. We are using an AppBar and a Drawer. The AppBar is the full-width navigation bar that you see on desktop devices, whereas Drawer is the smaller sized component that only appears on small-screen devices.
+
+We have used media queries and onclick events to make the components respond to screen sizes and user interactions.
+
+The React Router setup is same as shown previously.
+
+----3. With react-bootstrap
+
+Bootstrap is a popular library that isis very used to use. Bootstrap also has reacted version that is used forReactt applications.
+
+After creating a react project we have to install react-bootstrap 
+
+----npm I react-bootstrap bootstrap react-router-dom``
+
+Inside the index.js import the bootstrap css file import 'bootstrap/dist/css/bootstrap.min.css';
+
+Then create a Navbar.js file
+
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+import { Link } from 'react-router-dom'
+
+function BasicExample() {
+  return (
+    <Navbar bg="light" expand="lg">
+      <Container>
+        <Navbar.Brand href="#home">Navbar</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link><Link to='/'>Home</Link></Nav.Link>
+            <Nav.Link><Link to='/projects'>Projects</Link></Nav.Link>
+            <NavDropdown title="About" id="basic-nav-dropdown">
+              <NavDropdown.Item><Link to='/about'>About</Link></NavDropdown.Item>
+              <NavDropdown.Item>
+                  <Link to='/contact'>Contact</Link>
+              </NavDropdown.Item>
+            </NavDropdown>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
+}
+
+export default BasicExample;
+
+This is how our navigation bar will look like. The first image shows the desktop view where all the links are visible.
+
+The second image shows the mobile view, where a hamburger icon is visible and when it is clicked it shows the links.
+
+Conclusion
+In this article ,we have learned
+
+A navigation bar is important component of a website as it allows for easy user navigation.
+We have learned how to make a very simple navbarinteractt.
+It is recommended that a navbar should be responsive, that it fits well on both mobile and desktop devices.
+React bootstrap navbar is a navigation bar that is made with react-bootstrap.
+React navbar can also be made without using any libraries.
+We also created a React navbar using Material UI.
