@@ -466,7 +466,7 @@ After creating a react project we have to install react-bootstrap
 
 Inside the index.js import the bootstrap css file import 'bootstrap/dist/css/bootstrap.min.css';
 
-Then create a Navbar.js file
+----------Then create a Navbar.js file
 
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -512,3 +512,21 @@ It is recommended that a navbar should be responsive, that it fits well on both 
 React bootstrap navbar is a navigation bar that is made with react-bootstrap.
 React navbar can also be made without using any libraries.
 We also created a React navbar using Material UI.
+
+
+
+//////////////////////index.js
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import React from "react";
+
+import App from "./App";
+
+const rootElement = document.getElementById("root");
+const root = createRoot(rootElement);
+
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);
